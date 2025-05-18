@@ -1,0 +1,96 @@
+.modal-header,
+h4,
+.close {
+    background-color: #fbff00;
+    color: white !important;
+    text-align: center;
+    font-size: 30px;
+}
+
+.modal-footer {
+    background-color: #f9f9f9;
+}
+
+.viewlogin {
+    background-color: #fffb08;
+    margin-top: 250px;
+    margin-bottom: 250px;
+    margin-left: 100px;
+    margin-right: 100px;
+    padding-top: 35px;
+    padding-bottom: 35px;
+}
+
+.imgcontainer {
+    text-align: center;
+    margin: 24px 0 12px 0;
+    position: relative;
+}
+
+img.avatar {
+    width: 40%;
+    border-radius: 50%;
+}
+
+.altimage {
+    height: 200px;
+    background: #aaa;
+}
+
+.viewhome {
+    background-color: #fdf919;
+    margin-top: 250px;
+    margin-bottom: 250px;
+    margin-left: 100px;
+    margin-right: 100px;
+    padding-top: 35px;
+    padding-bottom: 35px;
+}
+
+.header {
+    background-image: url('../Assets/FoodCourtHD.jpg'); /* Ganti dengan path gambar Anda */
+    background-size: cover; /* Mengatur gambar agar menutupi seluruh area */
+    background-position: center; /* Mengatur posisi gambar di tengah */
+    position: relative; /* Agar ::before dapat diposisikan dengan benar */
+}
+
+.header::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(255, 255, 255, 0.623); /* Warna putih dengan transparansi 50% */
+    z-index: 1; /* Pastikan lapisan ini berada di atas gambar */
+}
+
+.header img {
+    position: relative; /* Agar logo dapat menggunakan z-index */
+    z-index: 2; /* Pastikan logo berada di atas lapisan pudar */
+}
+
+.header h3 {
+    position: relative; /* Agar teks tetap di atas lapisan pudar */
+    z-index: 2; /* Pastikan teks berada di atas lapisan pudar */
+}
+
+.header h5 {
+    position: relative; /* Agar teks tetap di atas lapisan pudar */
+    z-index: 2; /* Pastikan teks berada di atas lapisan pudar */
+}
+
+.icon-bar {
+    width: 100%;
+    overflow: auto;
+}
+
+.icon-bar a {
+    float: left;
+    text-align: center;
+    width: 20%;
+    padding: 12px 0;
+    transition: all 0.3s ease;
+    color: rgb(0, 0, 0);
+    font-size: 36px;
+}
