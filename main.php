@@ -21,6 +21,16 @@ session_start();
             color: white;
             transition: all 0.3s;
             padding-top: 20px;
+            position: fixed;
+            top: 0;
+            left: -280px;
+            width: 280px;
+            z-index: 1050;
+            overflow-y: auto;
+        }
+        
+        .sidebar.show {
+            left: 0;
         }
         
         .sidebar .nav-link {
@@ -69,6 +79,8 @@ session_start();
         .main-content {
             min-height: 100vh;
             padding: 20px;
+            transition: margin-left 0.3s;
+            width: 100%;
         }
         
         .user-profile {
@@ -119,44 +131,71 @@ session_start();
             z-index: 2;
         }
         
-        /* For mobile: collapse sidebar by default */
-        @media (max-width: 991.98px) {
-            .sidebar {
-                position: fixed;
-                top: 0;
-                left: -280px;
-                width: 280px;
-                z-index: 1050;
-                overflow-y: auto;
-            }
-            
-            .sidebar.show {
-                left: 0;
-            }
-            
-            .sidebar-backdrop {
-                position: fixed;
-                top: 0;
-                left: 0;
-                width: 100%;
-                height: 100%;
-                background-color: rgba(0, 0, 0, 0.5);
-                z-index: 1040;
-                display: none;
-            }
-            
-            .sidebar-backdrop.show {
-                display: block;
-            }
-            
-            .content-wrapper {
-                width: 100%;
-            }
+        /* Sidebar backdrop */
+        .sidebar-backdrop {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1040;
+            display: none;
+        }
+        
+        .sidebar-backdrop.show {
+            display: block;
+        }
+        
+        /* Hamburger menu styling */
+        .navbar-hamburger {
+            background-color: #212529;
+            padding: 10px 15px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1030;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .hamburger-btn {
+            border: none;
+            background: transparent;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 5px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .hamburger-btn:focus {
+            outline: none;
+        }
+        
+        /* Add padding to body to account for fixed navbar */
+        body {
+            padding-top: 55px;
         }
     </style>
 </head>
 
 <body>
+    <!-- Hamburger Menu Navbar -->
+    <nav class="navbar-hamburger">
+        <button class="hamburger-btn" id="sidebarToggle">
+            <i class="bi bi-list"></i>
+        </button>
+        <span class="text-white">Politeknik Negeri Samarinda</span>
+        <div class="user-info text-white">
+            <i class="bi bi-person-circle"></i>
+            <?php if(isset($_SESSION['authorized'])) echo $_SESSION['authorized']; ?>
+        </div>
+    </nav>
+
     <!-- Updated Header with Background Image -->
     <div class="header-with-bg">
         <div class="header-overlay"></div>
@@ -168,227 +207,216 @@ session_start();
         </div>
     </div>
 
-    <div class="container-fluid p-0">
-        <div class="row g-0">
-            <!-- Mobile toggle button -->
-            <div class="d-block d-lg-none py-2 px-3 bg-dark">
-                <button class="btn btn-light" id="sidebarToggle">
-                    <i class="bi bi-list"></i> Menu
-                </button>
-            </div>
+    <!-- Sidebar backdrop -->
+    <div class="sidebar-backdrop"></div>
             
-            <!-- Sidebar backdrop for mobile -->
-            <div class="sidebar-backdrop"></div>
-            
-            <!-- Sidebar -->
-            <div class="col-lg-3 col-xl-2 sidebar" id="sidebar">
-                <div class="sidebar-header d-flex justify-content-between align-items-center">
-                    <h5 class="mb-0">Menu</h5>
-                    <button class="btn btn-link text-light d-block d-lg-none p-0" id="closeSidebar">
-                        <i class="bi bi-x-lg"></i>
-                    </button>
-                </div>
+    <!-- Sidebar -->
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header d-flex justify-content-between align-items-center">
+            <h5 class="mb-0">Menu</h5>
+            <button class="btn btn-link text-light p-0" id="closeSidebar">
+                <i class="bi bi-x-lg"></i>
+            </button>
+        </div>
                 
-                <!-- Navigation Menu -->
-                <ul class="nav flex-column">
-                    <li class="nav-item">
-                        <a class="nav-link active" href="main.php">
-                            <i class="bi bi-house-door-fill"></i> Home
-                        </a>
-                    </li>
+        <!-- Navigation Menu -->
+        <ul class="nav flex-column">
+            <li class="nav-item">
+                <a class="nav-link active" href="main.php">
+                    <i class="bi bi-house-door-fill"></i> Home
+                </a>
+            </li>
                     
-                    <!-- Yang mengakses halaman ini hanya admin -->
-                    <?php if (isset($_SESSION['authorized']) && $_SESSION['authorized'] == "Admin") { ?>
-                    <li class="nav-item">
-                        <a class="nav-link dropdown-toggle" href="#masterDataSubmenu" data-bs-toggle="collapse" aria-expanded="false">
-                            <i class="bi bi-people-fill"></i> Master Data
-                        </a>
-                        <div class="collapse" id="masterDataSubmenu">
-                            <ul class="nav flex-column ms-3">
-                                <li class="nav-item">
-                                    <a class="nav-link" href="main.php?p=owner">
-                                        <i class="bi bi-person-fill"></i> Mahasiswa
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a class="nav-link" href="main.php?p=kasir">
-                                        <i class="bi bi-cash-register"></i> Dosen/Instruktor
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a class="nav-link" href="main.php?p=tenant">
-                                        <i class="bi bi-shop"></i> Admin
-                                    </a>
-                                </li>
-                            </ul>
-                        </div>
-                    </li>
-                    <?php } ?>
-                    
-                    <!-- Yang mengakses halaman ini hanya tenant dan admin -->
-                    <?php if (isset($_SESSION['authorized']) && ($_SESSION['authorized'] == "Tenant" || $_SESSION['authorized'] == "Admin")) { ?>
-                    <li class="nav-item">
-                        <a class="nav-link dropdown-toggle" href="#pemesananSubmenu" data-bs-toggle="collapse" aria-expanded="false">
-                            <i class="bi bi-bag-fill"></i> Pelatihan
-                        </a>
-                        <div class="collapse" id="pemesananSubmenu">
-                            <ul class="nav flex-column ms-3">
-                                <li class="nav-item">
-                                    <a class="nav-link" href="main.php?p=menu">
-                                        <i class="bi bi-card-list"></i> Menu
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a class="nav-link" href="main.php?p=pesanan">
-                                        <i class="bi bi-basket-fill"></i> Pesanan
-                                    </a>
-                                </li>
-                            </ul>
-                        </div>
-                    </li>
-                    <?php } ?>
-                    
-                    <!-- Yang mengakses halaman ini hanya kasir dan admin -->
-                    <?php if (isset($_SESSION['authorized']) && ($_SESSION['authorized'] == "Kasir" || $_SESSION['authorized'] == "Admin")) { ?>
-                    <li class="nav-item">
-                        <a class="nav-link" href="main.php?p=pembayaran">
-                            <i class="bi bi-credit-card-fill"></i> Sertifikat
-                        </a>
-                    </li>
-                    <?php } ?>
-                    
-                    <!-- Yang mengakses halaman ini hanya tenant, kasir, dan admin -->
-                    <?php if (isset($_SESSION['authorized']) && ($_SESSION['authorized'] == "Tenant" || $_SESSION['authorized'] == "Kasir" || $_SESSION['authorized'] == "Admin")) { ?>
-                    <li class="nav-item">
-                        <a class="nav-link dropdown-toggle" href="#notifikasiSubmenu" data-bs-toggle="collapse" aria-expanded="false">
-                            <i class="bi bi-bell-fill"></i> Notifikasi
-                        </a>
-                        <div class="collapse" id="notifikasiSubmenu">
-                            <ul class="nav flex-column ms-3">
-                                <?php if ($_SESSION['authorized'] == "Kasir" || $_SESSION['authorized'] == "Admin") { ?>
-                                <li class="nav-item">
-                                    <a class="nav-link" href="main.php?p=notifpesanan">
-                                        <i class="bi bi-clipboard-check"></i> Pesanan
-                                    </a>
-                                </li>
-                                <?php } ?>
-                                
-                                <?php if ($_SESSION['authorized'] == "Tenant" || $_SESSION['authorized'] == "Admin") { ?>
-                                <li class="nav-item">
-                                    <a class="nav-link" href="main.php?p=notifpembayaran">
-                                        <i class="bi bi-cash"></i> Pembayaran
-                                    </a>
-                                </li>
-                                <?php } ?>
-                            </ul>
-                        </div>
-                    </li>
-                    <?php } ?>
-                    
-                    <!-- Yang mengakses halaman ini hanya admin -->
-                    <?php if (isset($_SESSION['authorized']) && $_SESSION['authorized'] == "Admin") { ?>
-                    <li class="nav-item">
-                        <a class="nav-link" href="main.php?p=setuser">
-                            <i class="bi bi-person-fill-lock"></i> Forum
-                        </a>
-                    </li>
-                    <?php } ?>
-                    
-                    <!-- Yang mengakses halaman ini semua user -->
-                    <?php if (isset($_SESSION['authorized']) && ($_SESSION['authorized'] == "Owner" || $_SESSION['authorized'] == "Kasir" || $_SESSION['authorized'] == "Tenant" || $_SESSION['authorized'] == "Admin")) { ?>
-                    <li class="nav-item">
-                        <a class="nav-link dropdown-toggle" href="#laporanSubmenu" data-bs-toggle="collapse" aria-expanded="false">
-                            <i class="bi bi-journals"></i> Laporan
-                        </a>
-                        <div class="collapse" id="laporanSubmenu">
-                            <ul class="nav flex-column ms-3">
-                                <?php if ($_SESSION['authorized'] == "Owner"|| $_SESSION['authorized'] == "Tenant" || $_SESSION['authorized'] == "Admin") { ?>
-                                <li class="nav-item">
-                                    <a class="nav-link" href="#">
-                                        <i class="bi bi-clipboard-data"></i> Pemesanan
-                                    </a>
-                                </li>
-                                <?php } ?>
-                                
-                                <?php if ($_SESSION['authorized'] == "Owner" || $_SESSION['authorized'] == "Kasir" || $_SESSION['authorized'] == "Admin") { ?>
-                                <li class="nav-item">
-                                    <a class="nav-link" href="#">
-                                        <i class="bi bi-currency-exchange"></i> Transaksi
-                                    </a>
-                                </li>
-                                <?php } ?>
-                                
-                                <?php if ($_SESSION['authorized'] == "Owner" || $_SESSION['authorized'] == "Admin") { ?>
-                                <li class="nav-item">
-                                    <a class="nav-link" href="#">
-                                        <i class="bi bi-cart-check"></i> Penjualan
-                                    </a>
-                                </li>
-                                <?php } ?>
-                            </ul>
-                        </div>
-                    </li>
-                    <?php } ?>
-                    
-                    <li class="nav-item">
-                        <a class="nav-link dropdown-toggle" href="#grafikSubmenu" data-bs-toggle="collapse" aria-expanded="false">
-                            <i class="bi bi-bar-chart-line-fill"></i> Grafik
-                        </a>
-                        <div class="collapse" id="grafikSubmenu">
-                            <ul class="nav flex-column ms-3">
-                                <li class="nav-item">
-                                    <a class="nav-link" href="#">
-                                        <i class="bi bi-table"></i> Data
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a class="nav-link" href="#">
-                                        <i class="bi bi-graph-up"></i> Grafik Mingguan
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a class="nav-link" href="#">
-                                        <i class="bi bi-graph-up-arrow"></i> Grafik Bulanan
-                                    </a>
-                                </li>
-                                <li class="nav-item">
-                                    <a class="nav-link" href="#">
-                                        <i class="bi bi-graph-up"></i> Grafik Tahunan
-                                    </a>
-                                </li>
-                            </ul>
-                        </div>
-                    </li>
-                    
-                    <li class="nav-item">
-                        <a class="nav-link" href="main.php?p=usermanual">
-                            <i class="bi bi-person-fill-gear"></i> Profile User
-                        </a>
-                    </li>
-                </ul>
-            </div>
-            
-            <!-- Main Content -->
-            <div class="col-lg-9 col-xl-10 main-content">
-                <div class="container mt-4">
-                    <?php
-                    $pages_dir = 'pages';
-                    if (!empty($_GET['p'])) {
-                        $pages = scandir($pages_dir, 0);
-                        unset($pages[0], $pages[1]);
-
-                        $p = $_GET['p'];
-                        if (in_array($p . '.php', $pages)) {
-                            include($pages_dir . '/' . $p . '.php');
-                        } else {
-                            echo 'Halaman Tidak Ditemukan';
-                        }
-                    } else {
-                        include $pages_dir . '/beranda.php';
-                    }
-                    ?>
+            <!-- Yang mengakses halaman ini hanya admin -->
+            <?php if (isset($_SESSION['authorized']) && $_SESSION['authorized'] == "Admin") { ?>
+            <li class="nav-item">
+                <a class="nav-link dropdown-toggle" href="#masterDataSubmenu" data-bs-toggle="collapse" aria-expanded="false">
+                    <i class="bi bi-people-fill"></i> Master Data
+                </a>
+                <div class="collapse" id="masterDataSubmenu">
+                    <ul class="nav flex-column ms-3">
+                        <li class="nav-item">
+                            <a class="nav-link" href="main.php?p=mahasiswa">
+                                <i class="bi bi-mortarboard-fill"></i> Mahasiswa
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="main.php?p=dosen">
+                                <i class="bi bi-building-fill"></i> Dosen/Instruktor
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="main.php?p=admin">
+                                <i class="bi bi-person-badge-fill"></i></i> Admin
+                            </a>
+                        </li>
+                    </ul>
                 </div>
-            </div>
+            </li>
+            <?php } ?>
+                    
+            <!-- Yang mengakses halaman ini hanya tenant dan admin -->
+            <?php if (isset($_SESSION['authorized']) && ($_SESSION['authorized'] == "Tenant" || $_SESSION['authorized'] == "Admin")) { ?>
+            <li class="nav-item">
+                <a class="nav-link dropdown-toggle" href="#pemesananSubmenu" data-bs-toggle="collapse" aria-expanded="false">
+                    <i class="bi bi-book-half"></i> Pelatihan
+                </a>
+                <div class="collapse" id="pemesananSubmenu">
+                    <ul class="nav flex-column ms-3">
+                        <li class="nav-item">
+                            <a class="nav-link" href="main.php?p=menu">
+                                <i class="bi bi-card-list"></i> Informasi Pelatihan
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="main.php?p=pesanan">
+                                <i class="bi bi-basket-fill"></i> Pendaftaran Pelatihan
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </li>
+            <?php } ?>
+                    
+            <!-- Yang mengakses halaman ini hanya kasir dan admin -->
+            <?php if (isset($_SESSION['authorized']) && ($_SESSION['authorized'] == "Kasir" || $_SESSION['authorized'] == "Admin")) { ?>
+            <li class="nav-item">
+                <a class="nav-link" href="main.php?p=pembayaran">
+                    <i class="bi bi-award-fill"></i> Sertifikat
+                </a>
+            </li>
+            <?php } ?>
+                    
+            <!-- Yang mengakses halaman ini hanya tenant, kasir, dan admin -->
+            <?php if (isset($_SESSION['authorized']) && ($_SESSION['authorized'] == "Tenant" || $_SESSION['authorized'] == "Kasir" || $_SESSION['authorized'] == "Admin")) { ?>
+            <li class="nav-item">
+                <a class="nav-link dropdown-toggle" href="#notifikasiSubmenu" data-bs-toggle="collapse" aria-expanded="false">
+                    <i class="bi bi-bell-fill"></i> Notifikasi
+                </a>
+                <div class="collapse" id="notifikasiSubmenu">
+                    <ul class="nav flex-column ms-3">
+                        <?php if ($_SESSION['authorized'] == "Kasir" || $_SESSION['authorized'] == "Admin") { ?>
+                        <li class="nav-item">
+                            <a class="nav-link" href="main.php?p=notifpesanan">
+                                <i class="bi bi-clipboard-check"></i> Pesanan
+                            </a>
+                        </li>
+                        <?php } ?>
+                                
+                        <?php if ($_SESSION['authorized'] == "Tenant" || $_SESSION['authorized'] == "Admin") { ?>
+                        <li class="nav-item">
+                            <a class="nav-link" href="main.php?p=notifpembayaran">
+                                <i class="bi bi-cash"></i> Pembayaran
+                            </a>
+                        </li>
+                        <?php } ?>
+                    </ul>
+                </div>
+            </li>
+            <?php } ?>
+                    
+            <!-- Yang mengakses halaman ini hanya admin -->
+            <?php if (isset($_SESSION['authorized']) && $_SESSION['authorized'] == "Admin") { ?>
+            <li class="nav-item">
+                <a class="nav-link" href="main.php?p=setuser">
+                    <i class="bi bi-chat-dots-fill"></i> Forum
+                </a>
+            </li>
+            <?php } ?>
+                    
+            <!-- Yang mengakses halaman ini semua user -->
+            <?php if (isset($_SESSION['authorized']) && ($_SESSION['authorized'] == "Owner" || $_SESSION['authorized'] == "Kasir" || $_SESSION['authorized'] == "Tenant" || $_SESSION['authorized'] == "Admin")) { ?>
+            <li class="nav-item">
+                <a class="nav-link dropdown-toggle" href="#laporanSubmenu" data-bs-toggle="collapse" aria-expanded="false">
+                    <i class="bi bi-journals"></i> Laporan
+                </a>
+                <div class="collapse" id="laporanSubmenu">
+                    <ul class="nav flex-column ms-3">
+                        <?php if ($_SESSION['authorized'] == "Owner"|| $_SESSION['authorized'] == "Tenant" || $_SESSION['authorized'] == "Admin") { ?>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">
+                                <i class="bi bi-clipboard-data"></i> Pemesanan
+                            </a>
+                        </li>
+                        <?php } ?>
+                                
+                        <?php if ($_SESSION['authorized'] == "Owner" || $_SESSION['authorized'] == "Kasir" || $_SESSION['authorized'] == "Admin") { ?>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">
+                                <i class="bi bi-currency-exchange"></i> Transaksi
+                            </a>
+                        </li>
+                        <?php } ?>
+                                
+                        <?php if ($_SESSION['authorized'] == "Owner" || $_SESSION['authorized'] == "Admin") { ?>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">
+                                <i class="bi bi-cart-check"></i> Penjualan
+                            </a>
+                        </li>
+                        <?php } ?>
+                    </ul>
+                </div>
+            </li>
+            <?php } ?>
+                    
+            <li class="nav-item">
+                <a class="nav-link dropdown-toggle" href="#grafikSubmenu" data-bs-toggle="collapse" aria-expanded="false">
+                    <i class="bi bi-bar-chart-line-fill"></i> Grafik
+                </a>
+                <div class="collapse" id="grafikSubmenu">
+                    <ul class="nav flex-column ms-3">
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">
+                                <i class="bi bi-table"></i> Data
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">
+                                <i class="bi bi-graph-up"></i> Grafik Mingguan
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">
+                                <i class="bi bi-graph-up-arrow"></i> Grafik Bulanan
+                            </a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="#">
+                                <i class="bi bi-graph-up"></i> Grafik Tahunan
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </li>
+                    
+            <li class="nav-item">
+                <a class="nav-link" href="main.php?p=usermanual">
+                    <i class="bi bi-person-fill-gear"></i> Profile User
+                </a>
+            </li>
+        </ul>
+    </div>
+            
+    <!-- Main Content -->
+    <div class="main-content" id="content">
+        <div class="container mt-4">
+            <?php
+            $pages_dir = 'pages';
+            if (!empty($_GET['p'])) {
+                $pages = scandir($pages_dir, 0);
+                unset($pages[0], $pages[1]);
+
+                $p = $_GET['p'];
+                if (in_array($p . '.php', $pages)) {
+                    include($pages_dir . '/' . $p . '.php');
+                } else {
+                    echo 'Halaman Tidak Ditemukan';
+                }
+            } else {
+                include $pages_dir . '/beranda.php';
+            }
+            ?>
         </div>
     </div>
 
@@ -405,8 +433,9 @@ session_start();
             const sidebarToggle = document.getElementById('sidebarToggle');
             const closeSidebar = document.getElementById('closeSidebar');
             const sidebarBackdrop = document.querySelector('.sidebar-backdrop');
+            const mainContent = document.getElementById('content');
             
-            // Toggle sidebar on mobile
+            // Toggle sidebar
             sidebarToggle.addEventListener('click', function() {
                 sidebar.classList.add('show');
                 sidebarBackdrop.classList.add('show');
@@ -451,6 +480,16 @@ session_start();
                             bootstrap.Collapse.getInstance(otherCollapse).hide();
                         }
                     });
+                });
+            });
+
+            // Close sidebar when clicking on a nav link (for mobile)
+            const navLinks = document.querySelectorAll('.sidebar .nav-link:not(.dropdown-toggle)');
+            navLinks.forEach(link => {
+                link.addEventListener('click', function() {
+                    if (window.innerWidth < 992) {
+                        closeSidebarFunc();
+                    }
                 });
             });
         });
