@@ -47,11 +47,14 @@ img.avatar {
     padding-bottom: 35px;
 }
 
+/* Modified header styling with proper background image */
 .header {
-    background-image: url('../Assets/FoodCourtHD.jpg'); /* Ganti dengan path gambar Anda */
-    background-size: cover; /* Mengatur gambar agar menutupi seluruh area */
-    background-position: center; /* Mengatur posisi gambar di tengah */
-    position: relative; /* Agar ::before dapat diposisikan dengan benar */
+    background-image: url('Assets/REKTORAT.jpg'); /* Fixed path to image */
+    background-size: cover;
+    background-position: center;
+    position: relative;
+    padding: 2rem 0;
+    color: #000;
 }
 
 .header::before {
@@ -61,23 +64,20 @@ img.avatar {
     left: 0;
     right: 0;
     bottom: 0;
-    background: rgba(255, 255, 255, 0.623); /* Warna putih dengan transparansi 50% */
-    z-index: 1; /* Pastikan lapisan ini berada di atas gambar */
+    background: rgba(255, 255, 255, 0.7); /* Slightly more opaque white overlay */
+    z-index: 1;
 }
 
 .header img {
-    position: relative; /* Agar logo dapat menggunakan z-index */
-    z-index: 2; /* Pastikan logo berada di atas lapisan pudar */
+    position: relative;
+    z-index: 2;
+    margin-bottom: 10px;
 }
 
-.header h3 {
-    position: relative; /* Agar teks tetap di atas lapisan pudar */
-    z-index: 2; /* Pastikan teks berada di atas lapisan pudar */
-}
-
-.header h5 {
-    position: relative; /* Agar teks tetap di atas lapisan pudar */
-    z-index: 2; /* Pastikan teks berada di atas lapisan pudar */
+.header h3, .header h5 {
+    position: relative;
+    z-index: 2;
+    margin-bottom: 5px;
 }
 
 .icon-bar {

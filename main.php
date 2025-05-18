@@ -95,9 +95,28 @@ session_start();
             margin-top: 10px;
         }
         
-        .header {
-            background-color: #f8f9fa;
-            border-bottom: 1px solid #dee2e6;
+        /* Additional header styling for inline background image */
+        .header-with-bg {
+            background-image: url('Assets/REKTORAT.jpg');
+            background-size: cover;
+            background-position: center;
+            position: relative;
+            padding: 30px 0;
+        }
+        
+        .header-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255, 255, 255, 0.75);
+            z-index: 1;
+        }
+        
+        .header-content {
+            position: relative;
+            z-index: 2;
         }
         
         /* For mobile: collapse sidebar by default */
@@ -138,12 +157,15 @@ session_start();
 </head>
 
 <body>
-    <!-- Header -->
-    <div class="header p-3 text-black text-center">
-        <img src="Assets/Logo_Polnes.png" alt="Avatar" class="avatar" style="width:250px; height:100px;">
-        <h3><em>Politeknik Negeri Samarinda</em></h3>
-        <h3><strong>Pelatihan</strong></h3>
-        <h5 class="icon-bar" href="#"><i class="bi bi-geo-alt-fill"></i> Jl. Cipto Mangunkusumo, Samarinda Seberang</h5>
+    <!-- Updated Header with Background Image -->
+    <div class="header-with-bg">
+        <div class="header-overlay"></div>
+        <div class="header-content text-black text-center">
+            <img src="Assets/Logo_Polnes.png" alt="Logo Polnes" style="width:100px; height:135px; margin-bottom: 10px;">
+            <h3><em>Politeknik Negeri Samarinda</em></h3>
+            <h3><strong>Pelatihan</strong></h3>
+            <h5 class="mt-2"><i class="bi bi-geo-alt-fill"></i> Jl. Cipto Mangunkusumo, Samarinda Seberang</h5>
+        </div>
     </div>
 
     <div class="container-fluid p-0">
@@ -176,7 +198,7 @@ session_start();
                     </li>
                     
                     <!-- Yang mengakses halaman ini hanya admin -->
-                    <?php if ($_SESSION['authorized'] == "Admin") { ?>
+                    <?php if (isset($_SESSION['authorized']) && $_SESSION['authorized'] == "Admin") { ?>
                     <li class="nav-item">
                         <a class="nav-link dropdown-toggle" href="#masterDataSubmenu" data-bs-toggle="collapse" aria-expanded="false">
                             <i class="bi bi-people-fill"></i> Master Data
@@ -204,7 +226,7 @@ session_start();
                     <?php } ?>
                     
                     <!-- Yang mengakses halaman ini hanya tenant dan admin -->
-                    <?php if ($_SESSION['authorized'] == "Tenant" || $_SESSION['authorized'] == "Admin") { ?>
+                    <?php if (isset($_SESSION['authorized']) && ($_SESSION['authorized'] == "Tenant" || $_SESSION['authorized'] == "Admin")) { ?>
                     <li class="nav-item">
                         <a class="nav-link dropdown-toggle" href="#pemesananSubmenu" data-bs-toggle="collapse" aria-expanded="false">
                             <i class="bi bi-bag-fill"></i> Pelatihan
@@ -227,7 +249,7 @@ session_start();
                     <?php } ?>
                     
                     <!-- Yang mengakses halaman ini hanya kasir dan admin -->
-                    <?php if ($_SESSION['authorized'] == "Kasir" || $_SESSION['authorized'] == "Admin") { ?>
+                    <?php if (isset($_SESSION['authorized']) && ($_SESSION['authorized'] == "Kasir" || $_SESSION['authorized'] == "Admin")) { ?>
                     <li class="nav-item">
                         <a class="nav-link" href="main.php?p=pembayaran">
                             <i class="bi bi-credit-card-fill"></i> Sertifikat
@@ -236,7 +258,7 @@ session_start();
                     <?php } ?>
                     
                     <!-- Yang mengakses halaman ini hanya tenant, kasir, dan admin -->
-                    <?php if ($_SESSION['authorized'] == "Tenant" || $_SESSION['authorized'] == "Kasir" || $_SESSION['authorized'] == "Admin") { ?>
+                    <?php if (isset($_SESSION['authorized']) && ($_SESSION['authorized'] == "Tenant" || $_SESSION['authorized'] == "Kasir" || $_SESSION['authorized'] == "Admin")) { ?>
                     <li class="nav-item">
                         <a class="nav-link dropdown-toggle" href="#notifikasiSubmenu" data-bs-toggle="collapse" aria-expanded="false">
                             <i class="bi bi-bell-fill"></i> Notifikasi
@@ -264,7 +286,7 @@ session_start();
                     <?php } ?>
                     
                     <!-- Yang mengakses halaman ini hanya admin -->
-                    <?php if ($_SESSION['authorized'] == "Admin") { ?>
+                    <?php if (isset($_SESSION['authorized']) && $_SESSION['authorized'] == "Admin") { ?>
                     <li class="nav-item">
                         <a class="nav-link" href="main.php?p=setuser">
                             <i class="bi bi-person-fill-lock"></i> Forum
@@ -273,7 +295,7 @@ session_start();
                     <?php } ?>
                     
                     <!-- Yang mengakses halaman ini semua user -->
-                    <?php if ($_SESSION['authorized'] == "Owner" || $_SESSION['authorized'] == "Kasir" || $_SESSION['authorized'] == "Tenant" || $_SESSION['authorized'] == "Admin") { ?>
+                    <?php if (isset($_SESSION['authorized']) && ($_SESSION['authorized'] == "Owner" || $_SESSION['authorized'] == "Kasir" || $_SESSION['authorized'] == "Tenant" || $_SESSION['authorized'] == "Admin")) { ?>
                     <li class="nav-item">
                         <a class="nav-link dropdown-toggle" href="#laporanSubmenu" data-bs-toggle="collapse" aria-expanded="false">
                             <i class="bi bi-journals"></i> Laporan
